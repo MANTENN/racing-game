@@ -3,8 +3,8 @@ import { useStore, cameras } from '../store'
 
 function useKeys(keyConfig) {
   useEffect(() => {
-    const keyMap = keyConfig.reduce((out, { keys, fn, up = true }) => {
-      keys.forEach((key) => (out[key] = { fn, pressed: false, up }))
+    const keyMap = keyConfig.reduce((out, { keys, fn, up = 1 }) => {
+      keys.forEach((key) => (out[key] = { fn, pressed: 0, up }))
       return out
     }, {})
 
@@ -12,16 +12,16 @@ function useKeys(keyConfig) {
       if (!keyMap[key]) return
 
       const { fn, pressed, up } = keyMap[key]
-      keyMap[key].pressed = true
-      if (up || !pressed) fn(true)
+      keyMap[key].pressed = 1
+      if (up || !pressed) fn(1)
     }
 
     const upHandler = ({ key }) => {
       if (!keyMap[key]) return
 
       const { fn, up } = keyMap[key]
-      keyMap[key].pressed = false
-      if (up) fn(false)
+      keyMap[key].pressed = 0
+      if (up) fn(0)
     }
 
     window.addEventListener('keydown', downHandler, { passive: true })

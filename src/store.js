@@ -64,7 +64,7 @@ const useStore = create((set, get) => {
     editor: false,
     help: false,
     debug: false,
-    stats: false,
+    stats: true,
     level: createRef(),
     map: true,
     raycast: {
@@ -78,6 +78,9 @@ const useStore = create((set, get) => {
     controls: {
       forward: false,
       backward: false,
+      gamepadController: false,
+      invertGyro: true,
+      x: 0,
       left: false,
       right: false,
       brake: false,

@@ -6,7 +6,7 @@ import { Sky, Environment, OrbitControls, Stats } from '@react-three/drei'
 import { useStore, levelLayer } from './store'
 import { Heightmap, Ramp, Track, Vehicle } from './models'
 import { Editor, Help, Minimap, Overlay, Speed } from './ui'
-import { HideMouse, KeyboardControls } from './controls'
+import { HideMouse, KeyboardControls, GamepadControls } from './controls'
 
 const layers = new Layers()
 layers.enable(levelLayer)
@@ -52,6 +52,7 @@ export function App() {
       <Speed />
       <Help />
       <KeyboardControls />
+      <GamepadControls />
       <HideMouse />
       {editor && <Editor />}
       {stats && <Stats />}

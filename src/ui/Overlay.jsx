@@ -28,7 +28,7 @@ export function Overlay({ children }) {
       <Suspense fallback={<Ready setReady={setReady} />}>{children}</Suspense>
       <div className={`fullscreen bg ${ready ? 'ready' : 'notready'} ${clicked && 'clicked'}`}>
         <div className="stack">
-          <Keys style={{ paddingBottom: 20 }} />
+          {/* <Keys style={{ paddingBottom: 20 }} /> */}
           <a href="#" onClick={() => ready && setClicked(true)}>
             {!ready ? <Loader /> : 'Click to continue'}
           </a>

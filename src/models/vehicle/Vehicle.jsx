@@ -26,7 +26,7 @@ export function Vehicle({ angularVelocity = [0, 0.5, 0], children, position = [-
     defaultCamera.current.rotation.set(0, Math.PI, 0)
     defaultCamera.current.position.set(0, 10, -20)
     defaultCamera.current.lookAt(raycast.chassisBody.current.position)
-    defaultCamera.current.rotation.z = Math.PI // resolves the weird spin in the beginning
+    // defaultCamera.current.rotation.z = Math.PI // resolves the weird spin in the beginning
     // Subscriptions
     const vSub = raycast.chassisBody.current.api.velocity.subscribe((velocity) => set({ velocity, speed: v.set(...velocity).length() }))
     const sSub = api.sliding.subscribe((sliding) => set({ sliding }))
@@ -37,11 +37,19 @@ export function Vehicle({ angularVelocity = [0, 0.5, 0], children, position = [-
   let engineValue = 0
 
   useFrame((state, delta) => {
-    const { speed, controls } = useStore.getState()
-    const { forward, backward, left, right, brake, boost, reset } = controls
+    const { speed, controls, x } = useStore.getState()
+    const { forward, backward, left, right, brake, boost, reset, gamepadController, y } = controls
 
-    engineValue = THREE.MathUtils.lerp(engineValue, forward || backward ? force * (forward && !backward ? (boost ? -1.5 : -1) : 1) : 0, delta * 20)
-    steeringValue = THREE.MathUtils.lerp(steeringValue, left || right ? steer * (left && !right ? 1 : -1) : 0, delta * 20)
+    engineValue = THREE.MathUtils.lerp(
+      engineValue,
+      forward || backward ? force * (forward > 0 && !backward ? forward * (boost ? -1.5 : -1) : 1) : 0,
+      delta * 20,
+    )
+    steeringValue = THREE.MathUtils.lerp(
+      steeringValue,
+      gamepadController & (x != 0) ? x * steer : left || right ? steer * (left && !right ? 1 : -1) : 0,
+      delta * 20,
+    )
     for (let e = 2; e < 4; e++) api.applyEngineForce(speed < maxSpeed ? engineValue : 0, e)
     for (let s = 0; s < 2; s++) api.setSteeringValue(steeringValue, s)
     for (let b = 2; b < 4; b++) api.setBrake(brake ? (forward ? maxBrake / 1.5 : maxBrake) : 0, b)
@@ -66,11 +74,7 @@ export function Vehicle({ angularVelocity = [0, 0.5, 0], children, position = [-
     }
 
     // lean chassis
-    raycast.chassisBody.current.children[0].rotation.z = THREE.MathUtils.lerp(
-      raycast.chassisBody.current.children[0].rotation.z,
-      (-steeringValue * speed) / 200,
-      delta * 4,
-    )
+    raycast.chassisBody.current.children[0].rotation.z = THREE.MathUtils.lerp(raycast.chassisBody.current.children[0].rotation.z, 0, delta * 4)
   })
 
   return (
